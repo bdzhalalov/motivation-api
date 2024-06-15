@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"motivations-api/config"
 	"motivations-api/internal"
 )
@@ -9,9 +9,19 @@ import (
 func main() {
 	cfg := config.InitConfig()
 
-	server := internal.Init(&cfg)
+	logger := internal.Logger(&cfg)
+
+	server := internal.Init(&cfg, logger)
+
+	db, err := internal.ConnectToDB(&cfg, logger)
+
+	if err != nil {
+		fmt.Printf("Error connecting to database: %v\n", err)
+	}
+
+	defer db.Close()
 
 	if err := server.Run(); err != nil {
-		log.Fatal(err)
+		logger.Fatalf("Can't start server: %v", err)
 	}
 }

@@ -8,6 +8,11 @@ import (
 type Config struct {
 	Addr     string `mapstructure:"addr"`
 	LogLevel string `mapstructure:"log_level"`
+	DbName   string `mapstructure:"DB_NAME"`
+	DbHost   string `mapstructure:"DB_HOST"`
+	DbPort   string `mapstructure:"DB_PORT"`
+	DbUser   string `mapstructure:"DB_USER"`
+	DbPass   string `mapstructure:"DB_PASSWORD"`
 }
 
 func InitConfig() Config {

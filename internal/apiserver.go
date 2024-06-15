@@ -15,9 +15,7 @@ type APIServer struct {
 	server *http.Server
 }
 
-func Init(config *config.Config) *APIServer {
-
-	logger := Logger(config)
+func Init(config *config.Config, logger *logrus.Logger) *APIServer {
 
 	router := api.Router(logger)
 
