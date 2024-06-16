@@ -1,4 +1,4 @@
 .idea
 logs/*
-config/config.yaml
 cmd
+.env

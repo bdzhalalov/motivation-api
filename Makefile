@@ -1,5 +1,10 @@
 build:
-	go build -o ./cmd main.go
+	docker-compose build
 
-run:
-	go run main.go
+start:
+	docker-compose up -d
+	sleep 1
+	docker-compose ps
+
+stop:
+	docker-compose stop

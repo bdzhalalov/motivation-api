@@ -2,7 +2,6 @@ package internal
 
 import (
 	"errors"
-	"fmt"
 	"github.com/sirupsen/logrus"
 	"motivations-api/api"
 	"motivations-api/config"
@@ -15,9 +14,7 @@ type APIServer struct {
 	server *http.Server
 }
 
-func Init(config *config.Config) *APIServer {
-
-	logger := Logger(config)
+func Init(config *config.Config, logger *logrus.Logger) *APIServer {
 
 	router := api.Router(logger)
 
@@ -33,7 +30,7 @@ func Init(config *config.Config) *APIServer {
 
 func (s *APIServer) Run() error {
 
-	fmt.Println("Starting API server...")
+	s.logger.Info("Starting API server...")
 
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		s.logger.WithError(err).Fatal("Failed to start API server")
