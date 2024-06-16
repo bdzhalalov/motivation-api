@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"motivations-api/config"
 	"motivations-api/internal"
 )
@@ -16,7 +15,7 @@ func main() {
 	db, err := internal.ConnectToDB(&cfg, logger)
 
 	if err != nil {
-		fmt.Printf("Error connecting to database: %v\n", err)
+		logger.Fatalf("Error connecting to database: %v\n", err)
 	}
 
 	defer db.Close()

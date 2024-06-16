@@ -29,7 +29,7 @@ func ConnectToDB(config *config.Config, logger *logrus.Logger) (*Database, error
 		return nil, err
 	}
 
-	fmt.Println("Successfully connected to database")
+	logger.Info("Successfully connected to database")
 
 	return &Database{
 		connection: db,
