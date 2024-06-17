@@ -6,6 +6,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/sirupsen/logrus"
 	"motivations-api/config"
+	"motivations-api/pkg/migrations"
 )
 
 type Database struct {
@@ -30,6 +31,8 @@ func ConnectToDB(config *config.Config, logger *logrus.Logger) (*Database, error
 	}
 
 	logger.Info("Successfully connected to database")
+
+	migrations.CreateTable(db, logger)
 
 	return &Database{
 		connection: db,
