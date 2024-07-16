@@ -1,10 +1,12 @@
-package internal
+package server
 
 import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"motivations-api/api"
 	"motivations-api/config"
+	"motivations-api/internal/database"
+	"motivations-api/internal/services"
 	"net/http"
 )
 
@@ -14,9 +16,11 @@ type APIServer struct {
 	server *http.Server
 }
 
-func Init(config *config.Config, logger *logrus.Logger) *APIServer {
+func Init(config *config.Config, db *database.Database, logger *logrus.Logger) *APIServer {
 
-	router := api.Router(logger)
+	s := services.NewMotivationService(db, logger)
+
+	router := api.Router(logger, s)
 
 	return &APIServer{
 		config: config,
@@ -30,7 +34,7 @@ func Init(config *config.Config, logger *logrus.Logger) *APIServer {
 
 func (s *APIServer) Run() error {
 
-	s.logger.Info("Starting API server...")
+	s.logger.Info("Running API server on port" + s.config.Addr)
 
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		s.logger.WithError(err).Fatal("Failed to start API server")
