@@ -28,3 +28,12 @@ func (m MotivationRepository) GetMotivations() ([]*motivations.Motivation, error
 
 	return list, nil
 }
+
+func (m MotivationRepository) CreateMotivation(motivation *motivations.Motivation) (*motivations.Motivation, error) {
+	if err := m.db.Connection.Create(&motivation).Error; err != nil {
+		m.logger.Errorf("Error while creating motivation: %s", err)
+		return nil, err
+	}
+
+	return motivation, nil
+}
