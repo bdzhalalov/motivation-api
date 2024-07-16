@@ -3,14 +3,16 @@ package api
 import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
-	"net/http"
+	"motivations-api/internal/handler"
+	"motivations-api/internal/services"
 )
 
-func Router(logger *logrus.Logger) *mux.Router {
+func Router(logger *logrus.Logger, service *services.MotivationService) *mux.Router {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-	}).Methods("GET")
+	h := handler.New(service, logger)
+
+	router.HandleFunc("/", h.List).Methods("GET")
 
 	return router
 }
