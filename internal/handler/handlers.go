@@ -70,3 +70,15 @@ func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 
 	renderJSON(w, response, http.StatusOK)
 }
+
+func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+
+	err := h.service.DeleteMotivationById(id)
+	if err != nil {
+		renderJSON(w, err.Message, err.Code)
+		return
+	}
+
+	renderJSON(w, "", http.StatusNoContent)
+}

@@ -49,3 +49,11 @@ func (s MotivationService) GetMotivationById(id string) (*motivations.Motivation
 	res, err := s.repo.GetMotivationById(id)
 	return res, err
 }
+
+func (s MotivationService) DeleteMotivationById(id string) *errors.BaseError {
+	s.logger.Debug("Start deleting motivation by id")
+
+	err := s.repo.DeleteMotivationById(id)
+
+	return err
+}

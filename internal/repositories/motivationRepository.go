@@ -61,3 +61,23 @@ func (m MotivationRepository) GetMotivationById(id string) (*motivations.Motivat
 
 	return &motivation, nil
 }
+
+func (m MotivationRepository) DeleteMotivationById(id string) *customErrors.BaseError {
+	var motivation motivations.Motivation
+
+	if err := m.db.Connection.First(&motivation, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			var notFoundError customErrors.BaseAbstractError = &customErrors.NotFoundError{}
+			return notFoundError.New()
+		}
+	}
+
+	if err := m.db.Connection.Delete(&motivation, id).Error; err != nil {
+		m.logger.Errorf("Error while deleting motivation by id: %s", err)
+
+		var internalError customErrors.BaseAbstractError = &customErrors.InternalServerError{}
+		return internalError.New()
+	}
+
+	return nil
+}
