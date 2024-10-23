@@ -71,6 +71,24 @@ func (h *Handler) GetById(w http.ResponseWriter, r *http.Request) {
 	renderJSON(w, response, http.StatusOK)
 }
 
+// Update TODO: валидация данных для request body
+func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
+	id := mux.Vars(r)["id"]
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		renderJSON(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response, e := h.service.UpdateMotivationById(id, body)
+	if e != nil {
+		renderJSON(w, e.Message, e.Code)
+		return
+	}
+
+	renderJSON(w, response, http.StatusOK)
+}
+
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 

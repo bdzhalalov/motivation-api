@@ -62,6 +62,22 @@ func (m MotivationRepository) GetMotivationById(id string) (*motivations.Motivat
 	return &motivation, nil
 }
 
+func (m MotivationRepository) UpdateMotivationById(id string, motivation string) (*motivations.Motivation, *customErrors.BaseError) {
+	res, err := m.GetMotivationById(id)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := m.db.Connection.Model(&res).
+		Where("id = ?", id).Update("motivation", motivation).Error; err != nil {
+		m.logger.Errorf("Error while updating motivation: %s", err)
+		var internalError customErrors.BaseAbstractError = &customErrors.InternalServerError{}
+		return nil, internalError.New()
+	}
+
+	return res, nil
+}
+
 func (m MotivationRepository) DeleteMotivationById(id string) *customErrors.BaseError {
 	var motivation motivations.Motivation
 

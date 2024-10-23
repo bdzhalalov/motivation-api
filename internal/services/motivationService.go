@@ -50,6 +50,17 @@ func (s MotivationService) GetMotivationById(id string) (*motivations.Motivation
 	return res, err
 }
 
+func (s MotivationService) UpdateMotivationById(id string, data []byte) (*motivations.Motivation, *errors.BaseError) {
+	s.logger.Debug("Start updating motivation")
+
+	var motivation *motivations.Motivation
+	json.Unmarshal(data, &motivation)
+
+	res, err := s.repo.UpdateMotivationById(id, motivation.Motivation)
+
+	return res, err
+}
+
 func (s MotivationService) DeleteMotivationById(id string) *errors.BaseError {
 	s.logger.Debug("Start deleting motivation by id")
 
