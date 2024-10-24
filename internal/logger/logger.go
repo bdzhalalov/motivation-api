@@ -1,4 +1,4 @@
-package internal
+package logger
 
 import (
 	"fmt"
@@ -21,6 +21,8 @@ func Logger(config *config.Config) *logrus.Logger {
 
 	log.SetLevel(level)
 
+	log.SetOutput(os.Stdout)
+
 	file, err := os.OpenFile("./logs/app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
 	if err == nil {
 		log.SetOutput(file)
@@ -32,18 +34,17 @@ func Logger(config *config.Config) *logrus.Logger {
 				logrus.FatalLevel,
 				logrus.ErrorLevel,
 				logrus.WarnLevel,
+				logrus.DebugLevel,
 			},
 		})
 
 		log.AddHook(&writer.Hook{
 			Writer: os.Stdout,
 			LogLevels: []logrus.Level{
-				logrus.DebugLevel,
 				logrus.InfoLevel,
 			},
 		})
 	} else {
-		log.SetOutput(os.Stdout)
 		log.Info("Failed to log to file, using default stderr")
 	}
 
