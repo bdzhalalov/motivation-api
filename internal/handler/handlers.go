@@ -100,3 +100,13 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	renderJSON(w, "", http.StatusNoContent)
 }
+
+func (h *Handler) Random(w http.ResponseWriter, r *http.Request) {
+	response, err := h.service.GetRandomMotivation()
+	if err != nil {
+		renderJSON(w, err.Message, err.Code)
+		return
+	}
+
+	renderJSON(w, response, http.StatusOK)
+}

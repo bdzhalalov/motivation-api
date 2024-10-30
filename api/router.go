@@ -16,6 +16,7 @@ func Router(logger *logrus.Logger, service *services.MotivationService) *mux.Rou
 	group := router.PathPrefix("/motivations").Subrouter()
 	group.HandleFunc("/", h.List).Methods("GET")
 	group.HandleFunc("/", h.Create).Methods("POST")
+	group.HandleFunc("/random", h.Random).Methods("GET")
 	group.HandleFunc("/{id}", h.GetById).Methods("GET")
 	group.HandleFunc("/{id}", h.Update).Methods("PATCH")
 	group.HandleFunc("/{id}", h.Delete).Methods("DELETE")

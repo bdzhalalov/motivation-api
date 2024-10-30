@@ -68,3 +68,11 @@ func (s MotivationService) DeleteMotivationById(id string) *errors.BaseError {
 
 	return err
 }
+
+func (s MotivationService) GetRandomMotivation() (*motivations.Motivation, *errors.BaseError) {
+	s.logger.Debug("Start getting random motivation")
+
+	res, err := s.repo.GetRandomMotivation()
+
+	return res, err
+}

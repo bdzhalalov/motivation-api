@@ -97,3 +97,17 @@ func (m MotivationRepository) DeleteMotivationById(id string) *customErrors.Base
 
 	return nil
 }
+
+func (m MotivationRepository) GetRandomMotivation() (*motivations.Motivation, *customErrors.BaseError) {
+	var motivation motivations.Motivation
+
+	// TODO: not optimized method for getting random entity
+	if err := m.db.Connection.Raw("SELECT * FROM motivations ORDER BY RAND() LIMIT 1").Scan(&motivation).Error; err != nil {
+		m.logger.Errorf("Error while getting random motivation: %s", err)
+
+		var internalError customErrors.BaseAbstractError = &customErrors.InternalServerError{}
+		return nil, internalError.New()
+	}
+
+	return &motivation, nil
+}
