@@ -1,7 +1,6 @@
 package services
 
 import (
-	"encoding/json"
 	"github.com/sirupsen/logrus"
 	"motivations-api/internal/database"
 	"motivations-api/internal/errors"
@@ -31,12 +30,9 @@ func (s MotivationService) GetMotivations() ([]*motivations.Motivation, *errors.
 	return list, err
 }
 
-func (s MotivationService) CreateMotivation(data []byte) (*motivations.Motivation, *errors.BaseError) {
-	var motivation *motivations.Motivation
+func (s MotivationService) CreateMotivation(motivation *motivations.Motivation) (*motivations.Motivation, *errors.BaseError) {
 
 	s.logger.Debug("Start creating motivation")
-
-	json.Unmarshal(data, &motivation)
 
 	res, err := s.repo.CreateMotivation(motivation)
 
@@ -50,11 +46,8 @@ func (s MotivationService) GetMotivationById(id string) (*motivations.Motivation
 	return res, err
 }
 
-func (s MotivationService) UpdateMotivationById(id string, data []byte) (*motivations.Motivation, *errors.BaseError) {
+func (s MotivationService) UpdateMotivationById(id string, motivation *motivations.Motivation) (*motivations.Motivation, *errors.BaseError) {
 	s.logger.Debug("Start updating motivation")
-
-	var motivation *motivations.Motivation
-	json.Unmarshal(data, &motivation)
 
 	res, err := s.repo.UpdateMotivationById(id, motivation.Motivation)
 
