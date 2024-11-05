@@ -12,14 +12,17 @@ import (
 )
 
 type Handler struct {
-	service *services.MotivationService
-	logger  *logrus.Logger
+	service   *services.MotivationService
+	validator *validator.MotivationValidator
+	logger    *logrus.Logger
 }
 
 func New(service *services.MotivationService, logger *logrus.Logger) *Handler {
+	var v *validator.MotivationValidator
 	return &Handler{
-		service: service,
-		logger:  logger,
+		service:   service,
+		validator: v.New(),
+		logger:    logger,
 	}
 }
 
@@ -55,7 +58,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var motivation *motivations.Motivation
 	_ = json.Unmarshal(body, &motivation)
 
-	validationErrors := validator.ValidateCreatedMotivation(motivation)
+	validationErrors := h.validator.ValidateCreatedMotivation(motivation)
 	if validationErrors != nil {
 		renderJSON(w, validationErrors, http.StatusBadRequest)
 		return
@@ -93,7 +96,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	var motivation *motivations.Motivation
 	_ = json.Unmarshal(body, &motivation)
 
-	validationErrors := validator.ValidateUpdatedMotivation(motivation)
+	validationErrors := h.validator.ValidateUpdatedMotivation(motivation)
 	if validationErrors != nil {
 		renderJSON(w, validationErrors, http.StatusBadRequest)
 		return

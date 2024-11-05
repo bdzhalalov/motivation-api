@@ -6,22 +6,23 @@ import (
 	"net/url"
 )
 
-//TODO: create a validator object when initializing the app for reuse
+type MotivationValidator struct {
+	validator *govalidator.Validator
+}
 
-func ValidateCreatedMotivation(motivation *motivations.Motivation) url.Values {
-	rules := govalidator.MapData{
-		//TODO: create custom rule that supports cyrillic symbols
-		"nickname":   []string{"required", "alpha_space"},
-		"motivation": []string{"required", "alpha_space"},
+func (m *MotivationValidator) New() *MotivationValidator {
+	return &MotivationValidator{
+		validator: &govalidator.Validator{
+			Opts: govalidator.Options{},
+		},
 	}
+}
 
-	opts := govalidator.Options{
-		Data:  motivation,
-		Rules: rules,
-	}
+func (m *MotivationValidator) Validate(rules govalidator.MapData, data interface{}) url.Values {
+	m.validator.Opts.Data = data
+	m.validator.Opts.Rules = rules
 
-	v := govalidator.New(opts)
-	e := v.ValidateStruct()
+	e := m.validator.ValidateStruct()
 
 	if len(e) > 0 {
 		return e
@@ -29,22 +30,21 @@ func ValidateCreatedMotivation(motivation *motivations.Motivation) url.Values {
 	return nil
 }
 
-func ValidateUpdatedMotivation(motivation *motivations.Motivation) url.Values {
+func (m *MotivationValidator) ValidateCreatedMotivation(motivation *motivations.Motivation) url.Values {
+	rules := govalidator.MapData{
+		//TODO: create custom rule that supports cyrillic symbols
+		"nickname":   []string{"required", "alpha_space"},
+		"motivation": []string{"required", "alpha_space"},
+	}
+
+	return m.Validate(rules, motivation)
+}
+
+func (m *MotivationValidator) ValidateUpdatedMotivation(motivation *motivations.Motivation) url.Values {
 	rules := govalidator.MapData{
 		//TODO: create custom rule that supports cyrillic symbols
 		"motivation": []string{"required", "alpha_space"},
 	}
 
-	opts := govalidator.Options{
-		Data:  motivation,
-		Rules: rules,
-	}
-
-	v := govalidator.New(opts)
-	e := v.ValidateStruct()
-
-	if len(e) > 0 {
-		return e
-	}
-	return nil
+	return m.Validate(rules, motivation)
 }
