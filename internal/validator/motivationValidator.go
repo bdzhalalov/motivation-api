@@ -1,6 +1,7 @@
 package validator
 
 import (
+	"fmt"
 	"github.com/thedevsaddam/govalidator"
 	"motivations-api/pkg/modules/motivations"
 	"net/url"
@@ -11,6 +12,8 @@ type MotivationValidator struct {
 }
 
 func (m *MotivationValidator) New() *MotivationValidator {
+	addCustomRules()
+
 	return &MotivationValidator{
 		validator: &govalidator.Validator{
 			Opts: govalidator.Options{},
@@ -32,9 +35,8 @@ func (m *MotivationValidator) Validate(rules govalidator.MapData, data interface
 
 func (m *MotivationValidator) ValidateCreatedMotivation(motivation *motivations.Motivation) url.Values {
 	rules := govalidator.MapData{
-		//TODO: create custom rule that supports cyrillic symbols
-		"nickname":   []string{"required", "alpha_space"},
-		"motivation": []string{"required", "alpha_space"},
+		"nickname":   []string{"text", "required"},
+		"motivation": []string{"text", "required"},
 	}
 
 	return m.Validate(rules, motivation)
@@ -42,9 +44,19 @@ func (m *MotivationValidator) ValidateCreatedMotivation(motivation *motivations.
 
 func (m *MotivationValidator) ValidateUpdatedMotivation(motivation *motivations.Motivation) url.Values {
 	rules := govalidator.MapData{
-		//TODO: create custom rule that supports cyrillic symbols
-		"motivation": []string{"required", "alpha_space"},
+		"motivation": []string{"text", "required"},
 	}
 
 	return m.Validate(rules, motivation)
+}
+
+func addCustomRules() {
+	govalidator.AddCustomRule("text", func(field string, rule string, message string, value interface{}) error {
+		switch value.(type) {
+		case string:
+			return nil
+		}
+
+		return fmt.Errorf("the field %s can only be a string", field)
+	})
 }
