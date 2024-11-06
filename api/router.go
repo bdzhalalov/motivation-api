@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/sirupsen/logrus"
 	"motivations-api/internal/handler"
+	"motivations-api/internal/middleware"
 	"motivations-api/internal/services"
 )
 
@@ -11,6 +12,8 @@ func Router(logger *logrus.Logger, service *services.MotivationService) *mux.Rou
 	router := mux.NewRouter()
 
 	h := handler.New(service, logger)
+
+	router.Use(middleware.CheckApiKeyMiddleware)
 
 	// group of routes for motivations
 	group := router.PathPrefix("/motivations").Subrouter()
