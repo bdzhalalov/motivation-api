@@ -1,4 +1,4 @@
-package internal
+package database
 
 import (
 	"fmt"
@@ -6,10 +6,11 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/sirupsen/logrus"
 	"motivations-api/config"
+	"motivations-api/pkg/migrations"
 )
 
 type Database struct {
-	connection *gorm.DB
+	Connection *gorm.DB
 	logger     *logrus.Logger
 }
 
@@ -31,15 +32,17 @@ func ConnectToDB(config *config.Config, logger *logrus.Logger) (*Database, error
 
 	logger.Info("Successfully connected to database")
 
+	migrations.CreateTable(db, logger)
+
 	return &Database{
-		connection: db,
+		Connection: db,
 		logger:     logger,
 	}, nil
 }
 
 func (db *Database) Close() error {
-	if db.connection != nil {
-		return db.connection.Close()
+	if db.Connection != nil {
+		return db.Connection.Close()
 	}
 
 	db.logger.Info("Connection to database was closed")

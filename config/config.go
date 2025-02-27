@@ -8,6 +8,7 @@ import (
 type Config struct {
 	Addr     string `mapstructure:"addr"`
 	LogLevel string `mapstructure:"log_level"`
+	APIKey   string `mapstructure:"api_key"`
 	DbName   string `mapstructure:"DB_NAME"`
 	DbHost   string `mapstructure:"DB_HOST"`
 	DbPort   string `mapstructure:"DB_PORT"`
@@ -15,8 +16,9 @@ type Config struct {
 	DbPass   string `mapstructure:"DB_PASSWORD"`
 }
 
+var Cfg Config
+
 func InitConfig() Config {
-	var cfg Config
 
 	viper.SetConfigName(".env")
 	viper.SetConfigType("env")
@@ -26,10 +28,10 @@ func InitConfig() Config {
 		fmt.Printf("Error reading config file, %s\n", err)
 	}
 
-	err := viper.Unmarshal(&cfg)
+	err := viper.Unmarshal(&Cfg)
 	if err != nil {
 		fmt.Printf("Unable to decode into struct, %v\n", err)
 	}
 
-	return cfg
+	return Cfg
 }

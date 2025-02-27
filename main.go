@@ -2,25 +2,27 @@ package main
 
 import (
 	"motivations-api/config"
-	"motivations-api/internal"
+	"motivations-api/internal/database"
+	"motivations-api/internal/logger"
+	"motivations-api/internal/server"
 )
 
 func main() {
 	cfg := config.InitConfig()
 
-	logger := internal.Logger(&cfg)
+	log := logger.Logger(&cfg)
 
-	server := internal.Init(&cfg, logger)
-
-	db, err := internal.ConnectToDB(&cfg, logger)
+	db, err := database.ConnectToDB(&cfg, log)
 
 	if err != nil {
-		logger.Fatalf("Error connecting to database: %v\n", err)
+		log.Fatalf("Error connecting to database: %v", err)
 	}
 
 	defer db.Close()
 
-	if err := server.Run(); err != nil {
-		logger.Fatalf("Can't start server: %v", err)
+	apiServer := server.Init(&cfg, db, log)
+
+	if err := apiServer.Run(); err != nil {
+		log.Fatalf("Can't start server: %v", err)
 	}
 }
